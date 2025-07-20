@@ -1,0 +1,155 @@
+version: '3.8'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab-ce
+    hostname: gitlab.local
+    ports:
+      - "8080:80"
+      - "2222:22"
+      - "443:443"
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost:8080'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:-changeme123}'
+        # Enable container registry
+        registry_external_url 'http://localhost:5050'
+        gitlab_rails['registry_enabled'] = true
+        # Configure GitLab Pages
+        pages_external_url 'http://pages.localhost:8081'
+        gitlab_pages['enable'] = true
+        # Performance optimizations
+        unicorn['worker_processes'] = 2
+        sidekiq['max_concurrency'] = 25
+    restart: unless-stopped
+    depends_on:
+      - postgresql
+      - redis
+    networks:
+      - gitlab-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/-/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  postgresql:
+    image: postgres:13-alpine
+    container_name: gitlab-postgresql
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gitlabhq_production}
+      POSTGRES_USER: ${POSTGRES_USER:-gitlab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gitlab-db-password}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - gitlab-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gitlab}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: gitlab-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - gitlab-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  mcp-server:
+    image: iwakitakuma/gitlab-mcp:latest
+    container_name: mcp-server
+    ports:
+      - "${MCP_SERVER_PORT:-3002}:3002"
+    environment:
+      # GitLab MCP Configuration
+      GITLAB_PERSONAL_ACCESS_TOKEN: ${GITLAB_TOKEN}
+      GITLAB_API_URL: ${GITLAB_API_URL:-http://gitlab/api/v4}
+      GITLAB_PROJECT_ID: ${GITLAB_PROJECT_ID:-}
+      GITLAB_READ_ONLY_MODE: ${GITLAB_READ_ONLY_MODE:-false}
+      USE_GITLAB_WIKI: ${USE_GITLAB_WIKI:-true}
+      USE_MILESTONE: ${USE_MILESTONE:-true}
+      USE_PIPELINE: ${USE_PIPELINE:-true}
+      
+      # Server Configuration
+      NODE_ENV: ${NODE_ENV:-production}
+      
+      # Optional: Enable SSE mode
+      SSE: ${SSE:-false}
+      
+      # Optional: Enable HTTP mode
+      STREAMABLE_HTTP: ${STREAMABLE_HTTP:-false}
+      
+    restart: unless-stopped
+    depends_on:
+      gitlab:
+        condition: service_healthy
+    networks:
+      - gitlab-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/health", "||", "echo", "'OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  nginx:
+    image: nginx:alpine
+    container_name: gitlab-proxy
+    ports:
+      - "80:80"
+      - "8081:8081"  # GitLab Pages
+      - "5050:5050"  # Container Registry
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    restart: unless-stopped
+    depends_on:
+      - gitlab
+      - mcp-server
+    networks:
+      - gitlab-network
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  gitlab-config:
+    driver: local
+  gitlab-logs:
+    driver: local
+  gitlab-data:
+    driver: local
+  postgresql-data:
+    driver: local
+  redis-data:
+    driver: local
+  mcp-server-data:
+    driver: local
+
+networks:
+  gitlab-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
