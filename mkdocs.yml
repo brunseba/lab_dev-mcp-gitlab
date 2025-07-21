@@ -111,8 +111,8 @@ markdown_extensions:
 plugins:
   # Core plugins only (to avoid issues with missing plugins)
   - search
-  # - mkdocs-git-revision-date-plugin
-  # - mkdocs-git-authors-plugin
+  - git-revision-date
+  - git-authors
 
 # Additional configurations
 extra:
