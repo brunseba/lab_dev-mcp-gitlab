@@ -1,0 +1,77 @@
+/* Custom CSS for Mermaid diagrams in PDF output */
+
+/* Mermaid diagram container styling for PDF */
+.mermaid {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    text-align: center !important;
+    margin: 1em 0 !important;
+}
+
+/* Ensure SVG elements scale properly */
+.mermaid svg {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+/* Specific styling for different diagram types */
+.mermaid .flowchart,
+.mermaid .graph,
+.mermaid .gitgraph,
+.mermaid .sequence,
+.mermaid .gantt,
+.mermaid .class,
+.mermaid .state,
+.mermaid .er,
+.mermaid .journey,
+.mermaid .pie,
+.mermaid .requirement {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* Responsive text scaling for better readability */
+.mermaid text {
+    font-size: 12px !important;
+    font-family: "Roboto", sans-serif !important;
+}
+
+/* Ensure proper margins and padding */
+.mermaid-container {
+    page-break-inside: avoid !important;
+    margin: 1.5em 0 !important;
+    padding: 0.5em !important;
+    box-sizing: border-box !important;
+}
+
+/* Print-specific adjustments */
+@media print {
+    .mermaid {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    .mermaid svg {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+
+/* PDF-specific scaling */
+@page {
+    margin: 1in;
+}
+
+/* Force responsive behavior */
+.mermaid * {
+    max-width: 100% !important;
+}
