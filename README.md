@@ -1,6 +1,6 @@
-# Enhanced Developer Experience with AI and GitLab
+# Enhanced Developer Experience with AI and GitLab Integration
 
-This project aims to enhance the developer experience by integrating AI capabilities with GitLab through the Model Context Protocol (MCP). By combining these technologies, developers can leverage AI-powered assistance directly within their development workflow.
+This project aims to enhance the developer experience by integrating AI capabilities with GitLab using the Model Context Protocol (MCP). This integration allows developers to leverage AI-powered assistance directly within their workflow to increase productivity and automate routine tasks.
 
 ## 🚀 Quick Start
 
@@ -9,78 +9,82 @@ This project aims to enhance the developer experience by integrating AI capabili
 - VSCode or VSCodium IDE
 - GitLab Personal Access Token
 
-### 1. Environment Setup
-```bash
-# Copy environment template
-cp .env.example .env
+### Environment Setup
+1. Copy the environment template:
+   ```bash
+   cp .env.example .env
+   ```
+   Add your GitLab credentials to the `.env` file:
+   ```
+   GITLAB_TOKEN=your-gitlab-token-here
+   ```
 
-# Edit with your GitLab credentials
-# GITLAB_TOKEN=your-gitlab-token-here
-```
-
-### 2. Start Services
+### Start Services
+Start the GitLab and MCP server:
 ```bash
-# Start GitLab and MCP server
 docker-compose up -d
-
-# View logs
+```
+View real-time logs:
+```bash
 docker-compose logs -f
 ```
 
-### 3. Access Services
-- **GitLab**: http://localhost:8080
-- **MCP Server**: http://localhost:3002
-- **Documentation**: `./scripts/serve-docs.sh`
+### Access Services
+- **GitLab**: [http://localhost:8080](http://localhost:8080)
+- **MCP Server**: [http://localhost:3002](http://localhost:3002)
+- **Documentation**: Use `./scripts/serve-docs.sh`
 
 ## 📚 Documentation
 
-### Serve Documentation Locally
+### Serve Locally
+To serve the documentation locally, run:
 ```bash
-# Start documentation server
 ./scripts/serve-docs.sh
-
-# Or directly with MkDocs
+```
+or directly with MkDocs using:
+```bash
 mkdocs serve
 ```
 
-### Documentation Structure
-- **[Design](docs/design/)**: System architecture and component design
-- **[Use Cases](docs/use-cases/)**: Practical implementation scenarios
-- **[Implementation](docs/implementation/)**: Setup and configuration guides
+### Key Documentation
+- **[Design Documentation](docs/design/)**: Explore system architecture and component design
+- **[Use Cases](docs/use-cases/)**: Discover practical implementation scenarios
+- **[Implementation Guides](docs/implementation/)**: Learn setup and configuration procedures
 
 ## 🐳 Docker Services
 
 ### GitLab MCP Server
 - **Image**: `iwakitakuma/gitlab-mcp:latest`
 - **Port**: 3002
-- **Features**: Project management, issue tracking, merge requests, wiki, pipelines
+- **Features**: Project management, issues, merge requests, pipelines, and wiki
 
 ### GitLab CE
 - **Image**: `gitlab/gitlab-ce:latest`
 - **Ports**: 8080 (HTTP), 2222 (SSH), 443 (HTTPS)
-- **Features**: Complete GitLab instance with container registry and pages
+- **Features**: Complete instance, container registry, and pages
 
 ## 🔧 Configuration
 
 ### Environment Variables
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GITLAB_TOKEN` | GitLab Personal Access Token | Required |
-| `GITLAB_API_URL` | GitLab API endpoint | `http://gitlab/api/v4` |
-| `GITLAB_READ_ONLY_MODE` | Restrict to read operations | `false` |
-| `USE_GITLAB_WIKI` | Enable wiki functionality | `true` |
-| `USE_MILESTONE` | Enable milestone management | `true` |
-| `USE_PIPELINE` | Enable pipeline operations | `true` |
+| Variable               | Description                      | Default             |
+|------------------------|----------------------------------|---------------------|
+| `GITLAB_TOKEN`         | GitLab Personal Access Token     | Required            |
+| `GITLAB_API_URL`       | GitLab API endpoint              | `http://gitlab/api/v4` |
+| `GITLAB_READ_ONLY_MODE`| Restrict to read operations       | `false`             |
+| `USE_GITLAB_WIKI`      | Enable wiki functionality        | `true`              |
+| `USE_MILESTONE`        | Enable milestone management      | `true`              |
+| `USE_PIPELINE`         | Enable pipeline operations       | `true`              |
 
 ### AI Tool Integration
 
-#### Claude Desktop
+#### Claude Desktop Setup
+Configuration:
 ```json
 {
   "mcpServers": {
     "GitLab communication server": {
       "command": "npx",
-      "args": ["-y", "@zereight/mcp-gitlab"],
+      "args": ["@zereight/mcp-gitlab"],
       "env": {
         "GITLAB_PERSONAL_ACCESS_TOKEN": "your-token",
         "GITLAB_API_URL": "https://gitlab.com/api/v4"
@@ -91,13 +95,14 @@ mkdocs serve
 ```
 
 #### VSCode with Cline
+Configuration:
 ```json
 {
   "servers": {
     "GitLab-MCP": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@zereight/mcp-gitlab"],
+      "args": ["@zereight/mcp-gitlab"],
       "env": {
         "GITLAB_PERSONAL_ACCESS_TOKEN": "your-token"
       }
@@ -112,28 +117,28 @@ mkdocs serve
 ```
 .
 ├── docs/                   # MkDocs documentation
-│   ├── design/            # Architecture and design docs
+│   ├── design/            # Architectural design
 │   ├── use-cases/         # Use case documentation
-│   └── implementation/    # Setup and config guides
-├── nginx/                 # Nginx configuration
+│   └── implementation/    # Setup and configuration guides
+├── nginx/                 # Nginx configurations
 ├── scripts/               # Utility scripts
-├── docker-compose.yml     # Service orchestration
-├── mkdocs.yml            # Documentation configuration
+├── docker-compose.yml     # Service orchestration file
+├── mkdocs.yml            # MkDocs configuration
 └── .env.example          # Environment template
 ```
 
-### Scripts
-- `./scripts/serve-docs.sh` - Start documentation server
+### Management Scripts
+- To start the documentation server, run `./scripts/serve-docs.sh`
 
 ### Docker Commands
 ```bash
 # Start all services
 docker-compose up -d
 
-# View service status
+# View status
 docker-compose ps
 
-# View logs
+# Follow logs
 docker-compose logs -f
 
 # Stop services
@@ -146,60 +151,58 @@ docker-compose up -d --build
 ## 📊 Features
 
 ### GitLab Integration
-- ✅ Project and repository management
-- ✅ Issue tracking and management
-- ✅ Merge request workflows
-- ✅ CI/CD pipeline operations
-- 🔄 Wiki management (optional)
-- 🔄 Milestone tracking (optional)
+- ✔️ Comprehensive project and repository management
+- ✔️ Issue tracking and management
+- ✔️ Merge request workflows
+- ✔️ CI/CD pipeline operations
+- ⚙️ Optional: Wiki management
+- ⚙️ Optional: Milestone tracking
 
 ### AI Capabilities
-- **Code Review**: AI-assisted merge request reviews
+- **Code Review**: AI-assisted merge request analysis
 - **Issue Triage**: Automated categorization and assignment
 - **Documentation**: Automated README and wiki generation
-- **Code Generation**: AI-powered code suggestions
-- **Pipeline Optimization**: CI/CD performance improvements
+- **Code Suggestion**: AI-based code generation
+- **Pipeline Optimization**: Performance improvements
 
 ### IDE Support
 - **Claude Desktop**: Native MCP integration
-- **VSCode + Cline**: Extension-based integration
-- **Cursor**: Built-in MCP support
+- **VSCode + Cline**: Plugin-based integration
+- **Cursor**: Built-in support
 - **Roo Code**: Configuration-based setup
 
-## 🔐 Security
+## 🔐 Security and Configuration
 
 ### Access Token Setup
-1. Navigate to GitLab → User Settings → Access Tokens
-2. Create token with scopes:
+1. Go to GitLab → User Settings → Access Tokens
+2. Create a token with required scopes:
    - `api`: Full API access
    - `read_repository`: Repository read access
-   - `write_repository`: Repository write access (optional)
+   - `write_repository` (optional): Write access
 
-### Read-Only Mode
-For enhanced security, enable read-only mode:
+### Enabling Read-Only Mode
+To improve security, activate read-only mode:
 ```bash
 GITLAB_READ_ONLY_MODE=true
 ```
 
 ## 🚀 Use Cases
 
-1. **AI-Assisted Code Review**: Automated code quality analysis
+1. **AI-Assisted Code Review**: Automated quality analysis
 2. **Intelligent Issue Management**: Smart categorization and assignment
-3. **Documentation Generation**: Automated project documentation
+3. **Automated Documentation**: Project documentation generation
 4. **Pipeline Optimization**: CI/CD performance improvements
-5. **Code Migration**: AI-assisted framework upgrades
+5. **Code Migration**: Framework upgrade assistance
 
 ## 📖 Documentation
-
-For detailed documentation, visit:
-- **Setup Guide**: [docs/implementation/setup.md](docs/implementation/setup.md)
-- **Docker Configuration**: [docs/implementation/docker-compose.md](docs/implementation/docker-compose.md)
-- **MCP Integration**: [docs/implementation/mcp-integration.md](docs/implementation/mcp-integration.md)
-- **Use Cases**: [docs/use-cases/use-cases.md](docs/use-cases/use-cases.md)
+Access the complete documentation:
+- **Setup Guide**: [docs/implementation/setup.md]
+- **Docker Configuration**: [docs/implementation/docker-compose.md]
+- **MCP Integration**: [docs/implementation/mcp-integration.md]
+- **Use Cases**: [docs/use-cases/use-cases.md]
 
 ## 🤝 Contributing
-
-See [Contributing Guide](docs/implementation/contributing.md) for development setup and contribution guidelines.
+For contributing guidelines, see [Contributing Guide](docs/implementation/contributing.md).
 
 ## 📄 License
 
@@ -214,4 +217,4 @@ This project is licensed under the MIT License.
 
 ---
 
-**Start exploring AI-enhanced GitLab development today!** 🚀
+**Explore AI-enhanced GitLab development today!** 🚀
