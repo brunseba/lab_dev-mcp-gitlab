@@ -9,7 +9,7 @@ This document provides a detailed architectural view of the AI-enhanced GitLab d
 The system follows a layered architecture pattern with clear separation of concerns:
 
 ```mermaid
-graph TB
+graph TB 
     subgraph "Presentation Layer"
         A[VSCode/Codium IDE]
         B[Web Interface]
@@ -17,7 +17,7 @@ graph TB
     end
     
     subgraph "Application Layer"
-        D[MCP Server]
+D[GitLab MCP Server iwakitakuma]
         E[Request Router]
         F[Authentication Service]
     end
@@ -134,30 +134,32 @@ classDiagram
 ## 🌐 System Context Diagram
 
 ```mermaid
-C4Context
-    title System Context Diagram - AI Enhanced GitLab Environment
+flowchart TD
+    subgraph Users["👥 Users"]
+        Dev["👨‍💻 Developer<br/>Software developer using AI-enhanced IDE"]
+        Reviewer["🔍 Code Reviewer<br/>Reviews code with AI assistance"]
+        Manager["👔 Project Manager<br/>Manages projects and tracks progress"]
+    end
     
-    Person(dev, "Developer", "Software developer using AI-enhanced IDE")
-    Person(reviewer, "Code Reviewer", "Reviews code with AI assistance")
-    Person(manager, "Project Manager", "Manages projects and tracks progress")
+    subgraph System["🎯 AI-Enhanced GitLab System"]
+        MCP["🔄 MCP Server<br/>AI-GitLab integration platform"]
+    end
     
-    System(mcp, "MCP Server", "AI-GitLab integration platform")
+    subgraph External["🌐 External Systems"]
+        GitLab["🦊 GitLab<br/>Source code management and CI/CD"]
+        AI["🤖 AI Services<br/>OpenAI, Anthropic, etc."]
+        IDE["💻 IDE<br/>VSCode, Codium"]
+        Docker["🐳 Docker<br/>Container runtime"]
+    end
     
-    System_Ext(gitlab, "GitLab", "Source code management and CI/CD")
-    System_Ext(ai, "AI Services", "OpenAI, Anthropic, etc.")
-    System_Ext(ide, "IDE", "VSCode, Codium")
-    System_Ext(docker, "Docker", "Container runtime")
+    Dev -->|"Develops code"| IDE
+    IDE -->|"Requests AI assistance"| MCP
+    Reviewer -->|"Reviews merge requests"| GitLab
+    Manager -->|"Tracks project progress"| GitLab
     
-    Rel(dev, ide, "Develops code")
-    Rel(ide, mcp, "Requests AI assistance")
-    Rel(reviewer, gitlab, "Reviews merge requests")
-    Rel(manager, gitlab, "Tracks project progress")
-    
-    Rel(mcp, gitlab, "Integrates with")
-    Rel(mcp, ai, "Queries for assistance")
-    Rel(mcp, docker, "Deployed on")
-    
-    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="2")
+    MCP -->|"Integrates with"| GitLab
+    MCP -->|"Queries for assistance"| AI
+    MCP -->|"Deployed on"| Docker
 ```
 
 ## 📊 Data Flow Architecture

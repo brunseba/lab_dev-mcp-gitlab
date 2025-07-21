@@ -12,35 +12,196 @@ This project aims to enhance the developer experience by integrating AI capabili
 - **Docker Compose Setup**: Easy-to-deploy containerized environment
 - **IDE Configuration**: Pre-configured setup for VSCode/Codium
 
+## 🔄 Use-Case Diagrams
+
+### 🔍 Use-Case Analysis
+
+```mermaid
+flowchart TD
+    subgraph Actors
+        Developer[👨‍💻 Developer]
+        ProjectManager[👔 Project Manager]
+        Reviewer[🔍 Reviewer]
+        Administrator[⚙️ Administrator]
+    end
+    
+    subgraph UseCases["Use Cases"]
+        WriteCode[Write Code]
+        RequestAI[Request AI Assistance]
+        CodeReview[Perform Code Review]
+        TrackProgress[Track Progress]
+        ManageRepos[Manage Repositories]
+        
+        RunTests[Run Tests]
+        GenerateAI[Generate AI Suggestions]
+        PostComments[Post Review Comments]
+        GenerateReports[Generate Reports]
+    end
+    
+    Developer --> WriteCode
+    Developer --> RequestAI
+    Reviewer --> CodeReview
+    ProjectManager --> TrackProgress
+    Administrator --> ManageRepos
+    
+    WriteCode -.-> RunTests
+    RequestAI --> GenerateAI
+    CodeReview --> PostComments
+    TrackProgress --> GenerateReports
+```
+
+### 🌐 Context Diagram
+
+```mermaid
+flowchart LR
+    subgraph Internal
+        IDE[IDE Extensions]
+        MCP[GitLab MCP Server]
+    end
+    
+    subgraph GitLab[GitLab Environment]
+        GitLabInstance["🦊 GitLab Server"]
+    end
+    
+    subgraph External
+        AIM[AI Models]
+        Repos["🌐 External Code Repositories"]
+    end
+    
+    Developer --> IDE
+    IDE --> MCP
+    MCP --> GitLabInstance
+    MCP --> AIM
+    GitLabInstance --> Repos
+```
+
 ## 🔄 Architecture Overview
 
 ### High-Level Architecture
 
-Below is a diagram depicting the key components of the AI-enhanced GitLab environment and their interactions. The architecture includes seamless integration with IDEs, a centralized MCP server, and AI model interfaces.
+The architecture combines the official `iwakitakuma/gitlab-mcp` Docker image with our custom development environment, creating a comprehensive AI-enhanced GitLab ecosystem.
 
 ```mermaid
-flowchart TD
-    subgraph IDE[IDE Environment]
-    A[VSCode/Codium] -- B[MCP Client]
+flowchart TB
+    subgraph "Development Environment"
+        subgraph IDE["IDE Layer"]
+            A[VSCode/Codium]
+            B[Claude Desktop]
+            C[Cursor IDE]
+        end
+        
+        subgraph Client["MCP Client Layer"]
+            D[MCP Client Extensions]
+            E[stdio/SSE/HTTP Protocols]
+        end
     end
 
-    subgraph Server[MCP Server]
-    B -- C[Request Handler]
-    C -- D[AI Interface]
-    D -- E[AI Models]
+    subgraph "Container Infrastructure"
+        subgraph Services["Core Services"]
+            F["🐳 iwakitakuma/gitlab-mcp:latest<br/>Native MCP Server<br/>Port: 3002"]
+            G["🦊 gitlab/gitlab-ce:latest<br/>GitLab Instance<br/>Port: 8080"]
+        end
+        
+        subgraph Data["Data Layer"]
+            H[PostgreSQL<br/>Database]
+            I[Redis<br/>Cache]
+        end
+        
+        subgraph Proxy["Load Balancer"]
+            J[Nginx Proxy<br/>Port: 80]
+        end
     end
 
-    subgraph GitLab[GitLab Integration]
-    B -- F[GitLab API]
+    subgraph "External Services"
+        K["🤖 AI Models<br/>OpenAI/Anthropic"]
+        L["🌐 GitLab.com<br/>External Repos"]
     end
 
-    subgraph Containers[Container Setup]
-    G[Docker Compose] -- H[GitLab Instance]
-    G -- I[MCP Server Container]
+    subgraph "Custom Development"
+        M["📚 MkDocs Documentation<br/>Material Theme"]
+        N["🔧 Configuration Scripts<br/>Environment Setup"]
+        O["🏗️ Docker Compose<br/>Orchestration"]
     end
 
-    F --|Push/Pull Requests| I
-    I --|Feedback| B
+    %% IDE to MCP connections
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    
+    %% MCP Client to Services
+    E --> F
+    E --> G
+    
+    %% Proxy routing
+    J --> F
+    J --> G
+    
+    %% Service dependencies
+    F --> G
+    G --> H
+    G --> I
+    
+    %% External connections
+    F --> K
+    G --> L
+    
+    %% Custom development components
+    O --> F
+    O --> G
+    O --> H
+    O --> I
+    O --> J
+    
+    %% Styling
+    classDef nativeImage fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef customDev fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef external fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    
+    class F,G nativeImage
+    class M,N,O customDev
+    class K,L external
+```
+
+### Architecture Components Breakdown
+
+#### 🐳 Native Docker Images (Production-Ready)
+| Component | Image | Purpose | Features |
+|-----------|-------|---------|----------|
+| **GitLab MCP Server** | `iwakitakuma/gitlab-mcp:latest` | AI-GitLab bridge | • Model Context Protocol implementation<br/>• Multi-mode support (stdio/SSE/HTTP)<br/>• GitLab API v4 integration<br/>• Real-time project synchronization |
+| **GitLab CE** | `gitlab/gitlab-ce:latest` | Source control & DevOps | • Git repository management<br/>• CI/CD pipelines<br/>• Issue tracking & project management<br/>• Container registry & GitLab Pages |
+| **PostgreSQL** | `postgres:13-alpine` | Database backend | • GitLab data persistence<br/>• Transactional consistency<br/>• Performance optimization |
+| **Redis** | `redis:7-alpine` | Caching layer | • Session storage<br/>• Background job queuing<br/>• Performance acceleration |
+
+#### 🔧 Custom Development Components
+| Component | Type | Purpose | Benefits |
+|-----------|------|---------|----------|
+| **Docker Compose** | Orchestration | Service coordination | • One-command deployment<br/>• Environment isolation<br/>• Development consistency |
+| **MkDocs Documentation** | Static site generator | Knowledge management | • Material Design theme<br/>• Mermaid diagram support<br/>• PDF export capability |
+| **Nginx Configuration** | Reverse proxy | Load balancing & routing | • SSL termination<br/>• API endpoint routing<br/>• Static asset serving |
+| **Environment Templates** | Configuration | Setup automation | • Quick deployment<br/>• Security best practices<br/>• Customizable parameters |
+
+#### 🌐 Integration Flow
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant IDE as VSCode/Claude
+    participant MCP as GitLab MCP Server
+    participant GL as GitLab CE
+    participant AI as AI Models
+    
+    Dev->>IDE: Write code
+    IDE->>MCP: Request AI assistance
+    MCP->>GL: Fetch repository context
+    MCP->>AI: Generate AI response
+    AI->>MCP: Return suggestions
+    MCP->>IDE: Deliver AI insights
+    IDE->>Dev: Display recommendations
+    
+    Dev->>GL: Create merge request
+    GL->>MCP: Webhook notification
+    MCP->>AI: Analyze code changes
+    AI->>GL: Post review comments
 ```
 
 ## 🖥️ Component-Model Design
@@ -94,10 +255,10 @@ flowchart LR
     Q[External APIs]
     end
 
-    M --|Requests| N
-    N --|API Calls| O
-    N --|AI Queries| P
-    O --|External Resources| Q
+    M -->|Requests| N
+    N -->|API Calls| O
+    N -->|AI Queries| P
+    O -->|External Resources| Q
 ```
 
 ### Personas
@@ -106,6 +267,26 @@ flowchart LR
 - **AI Service**: Provides intelligent suggestions and feedback for the developer.
 - **External APIs**: May include third-party integrations enhancing GitLab features.
 - **GitLab Server**: Manages project repositories and CI/CD pipelines, interfacing directly with the MCP server.
+
+## 🔒 Security, Compliance, and Data Privacy
+
+### Security Considerations
+- **Authentication**: Ensure that all services use strong authentication methods such as OAuth tokens or API keys.
+- **Authorization**: Implement Role-Based Access Control (RBAC) to manage permissions.
+- **Data Encryption**: Use TLS for data in transit and AES for data at rest to protect sensitive information.
+- **Network Security**: Apply firewall rules and intrusion detection systems.
+
+### Compliance Standards
+- **GDPR Compliance**: Ensure that your handling of personal data adheres to the General Data Protection Regulation.
+- **CCPA Compliance**: Implement the California Consumer Privacy Act requirements for user data.
+- **Industry Standards**: Follow industry-specific standards like SOC 2 or HIPAA where applicable.
+
+### Data Privacy
+- **Data Minimization**: Collect only the data required for processing.
+- **Anonymization**: Apply techniques to anonymize personal data where possible.
+- **User Transparency**: Provide users with clear information on how their data is used.
+
+---
 
 ## 📋 Use Cases
 
@@ -134,6 +315,14 @@ flowchart LR
 - **[Component Model](design/component-model.md)**: Modular component design and patterns
 - **[Context & Personas](design/context-and-personas.md)**: User personas and system context
 - **[GitLab MCP Server](design/gitlab-mcp-server.md)**: Detailed GitLab MCP server capabilities and features
+
+### 🔒 Security & Compliance
+- **[Security Overview](security/security.md)**: Comprehensive security measures and architecture
+- **[Compliance Standards](security/compliance.md)**: Legal and industry compliance requirements
+- **[Data Privacy](security/data-privacy.md)**: Data protection and privacy implementation
+
+### 🔍 Analysis
+- **[GitLab Duo vs MCP Overlap](analysis/gitlab-duo-mcp-overlap.md)**: Feature comparison and strategic positioning analysis
 
 ### 🎯 Use Cases
 - **[All Use Cases](use-cases/use-cases.md)**: Comprehensive use case scenarios and examples

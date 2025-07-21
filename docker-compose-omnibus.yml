@@ -1,0 +1,187 @@
+version: '3.8'
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab-omnibus
+    hostname: gitlab.local
+    profiles:
+      - default
+      - gitlab
+    ports:
+      - "80:80"
+      - "443:443"
+      - "22:22"
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-logs:/var/log/gitlab
+      - gitlab-data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        # External URL
+        external_url 'http://localhost'
+        
+        # SSH settings
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        
+        # Initial root password
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD:-changeme123}'
+        
+        # Container registry
+        registry_external_url 'http://localhost:5050'
+        gitlab_rails['registry_enabled'] = true
+        registry['registry_http_addr'] = "0.0.0.0:5050"
+        
+        # GitLab Pages
+        pages_external_url 'http://pages.localhost'
+        gitlab_pages['enable'] = true
+        gitlab_pages['inplace_chroot'] = true
+        
+        # Performance optimizations for development
+        puma['worker_processes'] = 2
+        sidekiq['max_concurrency'] = 25
+        postgresql['shared_buffers'] = "256MB"
+        postgresql['max_worker_processes'] = 8
+        
+        # Disable unused services to save resources
+        prometheus_monitoring['enable'] = false
+        alertmanager['enable'] = false
+        node_exporter['enable'] = false
+        redis_exporter['enable'] = false
+        postgres_exporter['enable'] = false
+        pgbouncer_exporter['enable'] = false
+        gitlab_exporter['enable'] = false
+        grafana['enable'] = false
+        
+        # Backup settings
+        gitlab_rails['backup_keep_time'] = 604800  # 7 days
+        gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
+        
+        # Email settings (optional - uncomment and configure as needed)
+        # gitlab_rails['smtp_enable'] = true
+        # gitlab_rails['smtp_address'] = "smtp.gmail.com"
+        # gitlab_rails['smtp_port'] = 587
+        # gitlab_rails['smtp_user_name'] = "your-email@gmail.com"
+        # gitlab_rails['smtp_password'] = "your-app-password"
+        # gitlab_rails['smtp_domain'] = "smtp.gmail.com"
+        # gitlab_rails['smtp_authentication'] = "login"
+        # gitlab_rails['smtp_enable_starttls_auto'] = true
+        # gitlab_rails['smtp_tls'] = false
+    restart: unless-stopped
+    networks:
+      - gitlab-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/-/health"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+      start_period: 300s
+    shm_size: '256m'
+
+  mcp-server:
+    image: iwakitakuma/gitlab-mcp:latest
+    container_name: mcp-server
+    profiles:
+      - default
+      - mcp
+    ports:
+      - "${MCP_SERVER_PORT:-3002}:3002"
+    environment:
+      # GitLab MCP Configuration
+      GITLAB_PERSONAL_ACCESS_TOKEN: ${GITLAB_TOKEN}
+      GITLAB_API_URL: ${GITLAB_API_URL:-http://gitlab/api/v4}
+      GITLAB_PROJECT_ID: ${GITLAB_PROJECT_ID:-}
+      GITLAB_READ_ONLY_MODE: ${GITLAB_READ_ONLY_MODE:-false}
+      USE_GITLAB_WIKI: ${USE_GITLAB_WIKI:-true}
+      USE_MILESTONE: ${USE_MILESTONE:-true}
+      USE_PIPELINE: ${USE_PIPELINE:-true}
+      
+      # Server Configuration
+      NODE_ENV: ${NODE_ENV:-production}
+      
+      # Optional: Enable SSE mode
+      SSE: ${SSE:-false}
+      
+      # Optional: Enable HTTP mode
+      STREAMABLE_HTTP: ${STREAMABLE_HTTP:-false}
+    restart: unless-stopped
+    depends_on:
+      gitlab:
+        condition: service_healthy
+    networks:
+      - gitlab-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002/health", "||", "echo", "'OK'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Optional: GitLab Runner for CI/CD
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner
+    profiles:
+      - runner
+      - ci
+    volumes:
+      - gitlab-runner-config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    depends_on:
+      - gitlab
+    networks:
+      - gitlab-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+
+volumes:
+  gitlab-config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/gitlab/config
+  gitlab-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/gitlab/logs
+  gitlab-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/gitlab/data
+  gitlab-runner-config:
+    driver: local
+
+networks:
+  gitlab-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Profile usage examples:
+# docker-compose -f docker-compose-omnibus.yml up -d                    # Start GitLab and MCP server
+# docker-compose -f docker-compose-omnibus.yml --profile gitlab up -d   # Start only GitLab
+# docker-compose -f docker-compose-omnibus.yml --profile mcp up -d      # Start only MCP server
+# docker-compose -f docker-compose-omnibus.yml --profile runner up -d   # Start GitLab Runner
+# docker-compose -f docker-compose-omnibus.yml --profile ci up -d       # Start all CI/CD components

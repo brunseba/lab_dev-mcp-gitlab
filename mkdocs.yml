@@ -1,77 +1,243 @@
 site_name: Enhanced Developer Experience with AI and GitLab
-site_description: A comprehensive guide to integrating AI with GitLab for enhanced developer experience
+site_description: A comprehensive guide to integrating AI with GitLab through MCP for enhanced developer productivity and workflow automation
 site_author: Sebastien BRUN
+site_url: https://your-domain.com/dev-mcp-gitlab/
+repo_name: brunseba/lab_dev-mcp-gitlab
+repo_url: https://github.com/brunseba/lab_dev-mcp-gitlab
+edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: overrides
   features:
+    # Navigation
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
-    - toc.integrate
+    - navigation.expand
+    - navigation.path
     - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    
+    # Search
     - search.suggest
     - search.highlight
+    - search.share
+    
+    # Content
     - content.tabs.link
     - content.code.annotation
     - content.code.copy
+    - content.code.select
+    - content.tooltips
+    - content.action.edit
+    - content.action.view
+    
+    # Header
+    - header.autohide
+    
+    # Footer
+    - footer.navigation
+  
   language: en
   palette:
     - scheme: default
       toggle:
-        icon: material/toggle-switch-off-outline 
+        icon: material/brightness-7
         name: Switch to dark mode
       primary: teal
       accent: purple 
     - scheme: slate 
       toggle:
-        icon: material/toggle-switch
+        icon: material/brightness-4
         name: Switch to light mode    
       primary: teal
       accent: lime
+  
+  font:
+    text: Roboto
+    code: Roboto Mono
+  
+  icon:
+    logo: material/robot-excited
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
 
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
+  # Python Markdown
+  - abbr
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  
+  # Python Markdown Extensions
   - pymdownx.arithmatex:
       generic: true
-  - footnotes
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      auto_title: true
+      linenums: true
+      linenums_style: pymdownx-inline
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.mark
-  - attr_list
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 plugins:
-  - search
-  - with-pdf:
-      author: Sebastien BRUN
-      copyright: "2024"
-      enabled_if_env: ENABLE_PDF_EXPORT
-  - git-revision-date-localized:
-      enable_creation_date: true
+  # Core plugins only (to avoid issues with missing plugins)
+- search
+  - mkdocs-git-revision-date-plugin
+  - mkdocs-git-authors-plugin
 
+# Additional configurations
+extra:
+  version:
+    provider: mike
+    default: stable
+  
+  social:
+    - icon: fontawesome/brands/github
+link: https://github.com/brunseba/lab_dev-mcp-gitlab
+      name: GitHub Repository
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/iwakitakuma/gitlab-mcp
+      name: Docker Hub
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/your-profile
+      name: LinkedIn Profile
+    - icon: material/email
+      link: mailto:your-email@domain.com
+      name: Contact
+  
+  tags:
+    AI: ai
+    GitLab: gitlab
+    MCP: mcp
+    Docker: docker
+    Security: security
+    Implementation: implementation
+  
+  analytics:
+    provider: google
+    property: !ENV [GOOGLE_ANALYTICS_KEY, ""]
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >
+            Thanks for your feedback! Help us improve this page by
+            <a href="https://github.com/your-username/dev-mcp-gitlab/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">telling us what you need</a>.
+  
+  consent:
+    title: Cookie consent
+    description: >
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+    cookies:
+      analytics: Google Analytics
+    actions:
+      - accept
+      - manage
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# Copyright
+copyright: >
+  Copyright &copy; 2024 Sebastien BRUN - 
+  <a href="#__consent">Change cookie settings</a>
+
+# Navigation structure
 nav:
-  - Home: index.md
-  - Design:
-      - Architecture: design/architecture.md
+  - Home: 
+      - index.md
+      - Tags: tags.md
+  
+  - Getting Started:
+      - Prerequisites: prerequisites.md
+      - Quick Start: implementation/setup.md
+      - Installation Options: implementation/installation-options.md
+  
+  - Design & Architecture:
+      - System Architecture: design/architecture.md
       - Component Model: design/component-model.md
       - Context & Personas: design/context-and-personas.md
       - GitLab MCP Server: design/gitlab-mcp-server.md
-  - Use Cases:
-      - All Use Cases: use-cases/use-cases.md
+  
+  - Security & Compliance:
+      - Security Overview: security/security.md
+      - Compliance Standards: security/compliance.md
+      - Data Privacy: security/data-privacy.md
+      - Security Best Practices: security/best-practices.md
+  
+  - Analysis & Comparison:
+      - GitLab Duo vs MCP: analysis/gitlab-duo-mcp-overlap.md
+      - Performance Analysis: analysis/performance-analysis.md
+      - Cost Analysis: analysis/cost-analysis.md
+  
+  - Use Cases & Examples:
+      - Overview: use-cases/use-cases.md
+      - Developer Workflows: use-cases/developer-workflows.md
+      - Enterprise Scenarios: use-cases/enterprise-scenarios.md
+      - Integration Examples: use-cases/integration-examples.md
+  
   - Implementation:
-      - Prerequisites: prerequisites.md
-      - Setup: implementation/setup.md
       - Docker Compose: implementation/docker-compose.md
       - MCP Integration: implementation/mcp-integration.md
       - IDE Configuration: implementation/ide-config.md
+      - Implementation Guide: implementation/index.md
+      - Troubleshooting: implementation/troubleshooting.md
       - Contributing: implementation/contributing.md
+  
+  - API Reference:
+      - MCP Protocol: api/mcp-protocol.md
+      - GitLab API Usage: api/gitlab-api.md
+      - Configuration Schema: api/configuration.md
+  
+  - Presentations:
+      - Overview: presentations/mcp-gitlab-overview.md
+      - Assessment Phase: presentations/assessment-phase.md
+      - MVP Allotments: presentations/mvp-allotments.md
+      - Security Overview: presentations/security-overview.md
+  
+  - Community:
+      - Contributing Guidelines: community/contributing.md
+      - Code of Conduct: community/code-of-conduct.md
+      - Changelog: community/changelog.md
+      - Roadmap: community/roadmap.md

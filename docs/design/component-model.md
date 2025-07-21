@@ -17,7 +17,7 @@ graph TB
     end
     
     subgraph "Application Layer"
-        D[MCP Server Core]
+D[GitLab MCP Server iwakitakuma]
         E[Request Processor]
         F[Response Formatter]
     end

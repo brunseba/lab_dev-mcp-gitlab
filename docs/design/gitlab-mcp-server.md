@@ -20,6 +20,11 @@ The GitLab MCP (Model Context Protocol) Server by [@zereight](https://github.com
 - **Granular Permissions**: Fine-grained control over feature accessibility
 - **API URL Configuration**: Support for both GitLab.com and self-hosted instances
 
+### Dedicated Docker Deployment
+- **Docker Image**: `iwakitakuma/gitlab-mcp:latest` for streamlined integration and easy deployment
+- **Image Source**: Built from the official GitLab MCP server repository at [github.com/zereight/gitlab-mcp](https://github.com/zereight/gitlab-mcp)
+- **Docker Hub**: Available at `iwakitakuma/gitlab-mcp` for immediate use
+
 ### Integration Modes
 - **stdio**: Standard input/output mode for direct integration
 - **SSE (Server-Sent Events)**: Real-time event streaming

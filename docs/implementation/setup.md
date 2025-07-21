@@ -4,6 +4,21 @@
 
 This guide will walk you through setting up the AI-enhanced GitLab development environment step by step.
 
+## 🏗️ GitLab Installation Options
+
+This setup supports multiple GitLab installation methods to accommodate different operational models:
+
+### Option 1: GitLab Omnibus (Docker) - Recommended
+**Best for**: Development, testing, and small-to-medium production deployments
+
+### Option 2: GitLab Omnibus (Native)
+**Best for**: Large-scale production environments with dedicated infrastructure
+
+### Option 3: GitLab Cloud (GitLab.com)
+**Best for**: Teams wanting to focus on development without infrastructure management
+
+---
+
 ## 🚀 Installation Steps
 
 ### Step 1: Clone the GitLab MCP Server
@@ -58,7 +73,29 @@ POSTGRES_HOST=postgresql
 REDIS_URL=redis://redis:6379
 ```
 
-### Step 4: Build and Start Services
+### Step 4: Choose Installation Method
+
+#### Method A: Docker Compose (Default)
+```bash
+# Build and start all services
+docker-compose up -d
+
+# Check service status
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+```
+
+#### Method B: Native GitLab Omnibus
+See the [GitLab Omnibus Native Installation](#gitlab-omnibus-native-installation) section below.
+
+#### Method C: GitLab.com Integration
+See the [GitLab.com Integration](#gitlabcom-integration) section below.
+
+---
+
+### Step 5: Build and Start Services (Docker Method)
 
 ```bash
 # Build and start all services

@@ -48,7 +48,7 @@ graph TB
     end
     
     subgraph "AI System"
-        D[MCP Server]
+        D[GitLab MCP Server iwakitakuma]
         E[AI Assistant]
     end
     
@@ -86,7 +86,7 @@ graph TB
 sequenceDiagram
     participant Alex
     participant VSCode
-    participant MCP as MCP Server
+    participant MCP as GitLab MCP Server (iwakitakuma)
     participant AI as AI Assistant
     participant GitLab
     
@@ -126,7 +126,7 @@ graph TB
     end
     
     subgraph "AI System"
-        D[MCP Server]
+        D[GitLab MCP Server iwakitakuma]
         E[Pipeline Optimizer]
     end
     
@@ -165,7 +165,7 @@ graph TB
 sequenceDiagram
     participant Sarah
     participant GitLab as GitLab CI
-    participant MCP as MCP Server
+    participant MCP as GitLab MCP Server (iwakitakuma)
     participant AI as AI Optimizer
     participant Infra as Infrastructure
     
@@ -203,7 +203,7 @@ graph TB
     end
     
     subgraph "AI System"
-        D[MCP Server]
+        D[GitLab MCP Server iwakitakuma]
         E[Code Analyzer]
         F[Review Assistant]
     end
@@ -243,7 +243,7 @@ graph TB
 sequenceDiagram
     participant Marcus
     participant GitLab
-    participant MCP as MCP Server
+    participant MCP as GitLab MCP Server (iwakitakuma)
     participant AI as Review AI
     participant Security as Security Scanner
     
@@ -280,7 +280,7 @@ graph TB
     end
     
     subgraph "AI System"
-        D[MCP Server]
+        D[GitLab MCP Server iwakitakuma]
         E[Analytics Engine]
         F[Predictive Models]
     end
@@ -321,7 +321,7 @@ graph TB
 sequenceDiagram
     participant Lisa
     participant GitLab
-    participant MCP as MCP Server
+    participant MCP as GitLab MCP Server (iwakitakuma)
     participant AI as Analytics AI
     participant Dashboard
     
@@ -353,7 +353,7 @@ sequenceDiagram
 **Interaction Pattern**:
 ```mermaid
 graph LR
-    A[MCP Server] -->|API Request| B[AI Service]
+    A[GitLab MCP Server (iwakitakuma)] --> |API Request| B[AI Service]
     B -->|AI Response| A
     A -->|Usage Metrics| C[Billing System]
     B -->|Rate Limits| A
