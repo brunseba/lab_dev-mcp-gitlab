@@ -75,4 +75,4 @@ Before proceeding, ensure you have:
 
 ## 🚀 Next Steps
 
-Once all prerequisites are met, proceed to the [Setup Guide](setup.md) to begin the installation process.
+Once all prerequisites are met, proceed to the [Setup Guide](implementation/setup.md) to begin the installation process.

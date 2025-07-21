@@ -18,7 +18,7 @@ if [ ! -d "venv" ]; then
     echo "Virtual environment not found. Creating one..."
     python3 -m venv venv
     source venv/bin/activate
-    pip install mkdocs-material mkdocs-git-revision-date-plugin mkdocs-git-authors-plugin
+    pip install mkdocs-material mkdocs-git-revision-date-plugin mkdocs-git-authors-plugin mkdocs-with-pdf mkdocs-mermaid2-plugin
 else
     source venv/bin/activate
 fi

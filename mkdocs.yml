@@ -101,7 +101,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.tasklist:
@@ -113,6 +113,33 @@ plugins:
   - search
   - git-revision-date
   - git-authors
+  - mermaid2:
+      arguments:
+        theme: |
+          {
+            'theme': 'base',
+            'themeVariables': {
+              'primaryColor': '#009688',
+              'primaryTextColor': '#ffffff',
+              'primaryBorderColor': '#004d40',
+              'lineColor': '#757575',
+              'secondaryColor': '#e0f2f1',
+              'tertiaryColor': '#ffffff'
+            }
+          }
+        width: 800
+        height: 600
+  - to-pdf:
+      output_path: documentation-to-pdf.pdf
+      enabled_if_env: ENABLE_PDF_EXPORT
+      render_js: true
+      headless_chrome_path: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+      verbose: true
+      design: stylesheets/pdf-mermaid.css
+      custom_template: null
+      debug_html: false
+      two_columns_level: 3
+      add_full_urls: false
 
 # Additional configurations
 extra:
@@ -173,6 +200,9 @@ extra:
       - accept
       - manage
 
+extra_css:
+  - stylesheets/pdf-mermaid.css
+
 extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
@@ -209,6 +239,7 @@ nav:
       - GitLab Duo vs MCP: analysis/gitlab-duo-mcp-overlap.md
       - Performance Analysis: analysis/performance-analysis.md
       - Cost Analysis: analysis/cost-analysis.md
+      - MCP Server Recommendations: recommendation_best_mcp_server.md
   
   - Use Cases & Examples:
       - Overview: use-cases/use-cases.md

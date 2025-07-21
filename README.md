@@ -171,6 +171,23 @@ docker-compose up -d --build
 - **Cursor**: Built-in support
 - **Roo Code**: Configuration-based setup
 
+## 📈 Recommendation for Production MCP Server
+
+### Key Criteria for Choosing an MCP Server
+- **Performance**: Look for servers with high responsiveness, stability under load, and effective concurrency handling.
+- **Scalability**: Ensure the MCP server supports horizontal and vertical scaling to handle increased workloads.
+- **Monitoring and Optimization**: Include comprehensive monitoring tools and plan for ongoing performance tuning.
+
+### Performance Insights
+Refer to the [Performance Analysis](docs/analysis/performance-analysis.md) for detailed benchmarks and results:
+- **Response Time**: Average 95ms for standard operations 
+- **Throughput**: Sustained at 1,000+ requests per minute
+- **Scalability**: Effective up to 10,000 concurrent users
+
+For further exploration, see:
+- **Enterprise Scenarios**: [Enterprise Use Cases](docs/use-cases/enterprise-scenarios.md)
+- **Best Practices**: [Security and Performance Best Practices](docs/security/best-practices.md)
+
 ## 🔐 Security and Configuration
 
 ### Access Token Setup

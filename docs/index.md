@@ -304,9 +304,9 @@ flowchart LR
 ## 🏃‍♂️ Quick Start
 
 1. **Prerequisites**: Ensure you have the required tools installed (see [Prerequisites](prerequisites.md))
-2. **Setup**: Follow the setup guide to configure your environment (see [Setup](setup.md))
-3. **Docker Compose**: Deploy the local GitLab and MCP server (see [Docker Compose](docker-compose.md))
-4. **IDE Configuration**: Configure your IDE for optimal integration (see [IDE Configuration](ide-config.md))
+2. **Setup**: Follow the setup guide to configure your environment (see [Setup](implementation/setup.md))
+3. **Docker Compose**: Deploy the local GitLab and MCP server (see [Docker Compose](implementation/docker-compose.md))
+4. **IDE Configuration**: Configure your IDE for optimal integration (see [IDE Configuration](implementation/ide-config.md))
 
 ## 📚 Documentation Structure
 
@@ -337,4 +337,4 @@ flowchart LR
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](contributing.md) for details on how to get started.
+We welcome contributions! Please see our [Contributing Guide](implementation/contributing.md) for details on how to get started.
